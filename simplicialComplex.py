@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import copy
-#import testSimplicialComplex
+import testSimplicialComplex as ts
 
 class Process:
     def __init__(self, id):
@@ -62,12 +62,12 @@ def execution3(simplex):
 def addToDict(d,s):
     v0 = (s[0].id,s[0].view)
     v1 = (s[1].id,s[1].view)
-    if not(d.has_key(v0)):
+    if (v0 not in d):
         d[v0]=[v1]
     else:
         d[v0].append(v1)
 
-    if not(d.has_key(v1)):
+    if (v1 not in d):
         d[v1]=[v0]
     else:
         d[v1].append(v0)
@@ -96,7 +96,7 @@ def assignColors(dc):
 #              pcomplex: complejo simplicial que se subdividirá
 def generateComplexProtocol(pcomplex, k):
     tcomplex = []
-    for i in xrange(k):
+    for i in range(k):
         tcomplex = []
         for s in pcomplex:
             simplex1 = execution1(s)
@@ -109,8 +109,8 @@ def generateComplexProtocol(pcomplex, k):
 
 def plot(pcomplex): 
     dc = toAdjacencyList(pcomplex)
+    testMerge(dc)
     gc = Graph(dc)
-    #testMerge(dc)
     color = assignColors(dc)
     #testAssignColors(color)
     gc.show(vertex_colors=color)
@@ -120,7 +120,9 @@ p0 = Process(0)
 p1 = Process(1)
 icomplex = [[p0,p1]]
 pcomplex = generateComplexProtocol(icomplex,k)
-print pcomplex
+print(pcomplex)
+dc = toAdjacencyList(pcomplex)
+ts.testMerge(dc)
 
 #plot(pcomplex)
 
