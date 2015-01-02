@@ -10,9 +10,16 @@ def testMerge(d):
     print ('test merge')
     for k in d:
         s = '';
+        prefix = ''
         for v in d[k]:  
-            s += ' ' + str(v) 
+            s += prefix + ' ' + str(v) 
+            prefix = ','
         print ('{}:[{}]\n'.format(k,s))
+
+def testEdges(edges):
+    print ('test edges')
+    for e in edges:
+        print(e)
 
 def testAssignColors(c):
     for k in c:

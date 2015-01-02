@@ -3,6 +3,9 @@
 
 import copy
 import testSimplicialComplex as ts
+import collections as c
+import pdb
+import igraph as ig
 
 class Process:
     def __init__(self, id):
@@ -60,26 +63,79 @@ def execution3(simplex):
 # <Parámetros> d: Diccionario que representa la lista de adyacencia 
 #              s: Simplejo
 def addToDict(d,s):
-    v0 = (s[0].id,s[0].view)
-    v1 = (s[1].id,s[1].view)
-    if (v0 not in d):
-        d[v0]=[v1]
-    else:
-        d[v0].append(v1)
+    #TODO: REMOVER CLASE VERTEX Y DEJARLO COMO TUPLAS
+    class Vertex(object):
+        def __init__(self, id, view):
+            self.id = (id,view)
+            # self.index = 0
+        def __str__(self):
+            # return "({},{})".format(self.id, self.index)
+            return str(self.id)
+        __repr__=__str__
 
-    if (v1 not in d):
-        d[v1]=[v0]
-    else:
-        d[v1].append(v0)
 
+    v0 = Vertex(s[0].id,s[0].view)
+    v1 = Vertex(s[1].id,s[1].view)
+
+    # v0 = (s[0].id,s[0].view)
+    # v1 = (s[1].id,s[1].view)
+
+    if (v0.id not in d):
+        # v0.index = next(ig)
+        d[v0.id]=[]
+    if (v1.id not in d):
+        # v1.index = next(ig)
+        d[v1.id]=[]    
+    d[v0.id].append(v1.id)
+    d[v1.id].append(v0.id)
+
+    #     d[v0.id]=[v1]
+    # else:
+    #     d[v0.id].append(v1)
+
+    # if (v1.id not in d):
+    #     v1.index = next(ig)
+    #     d[v1.id]=[v0]
+    # else:
+    #     d[v1.id].append(v0)
+
+#TODO: CHECAR LO DE LISTA DE VERTICES
+def buildVerticesEdges(d):
+    edges = []
+    vertices = list(d)
+    print ("vertices todos")
+    print (vertices)
+
+    for i, k in enumerate(d):
+        # print ("solo vertices en lista")
+        # # print([v for v in d[k]])
+        # for v in d[k]:
+        #     print ("%s -- %d"%(v,vertices.index(v)))
+        #     print (vertices.index(v))
+        edges.extend([(i, (lambda x: vertices.index(x))(v)) for v in d[k]])
+    return vertices, edges
 # <Descripción> Genera una representación de lista de adyacencia del complejo simplicial.
 # Esto porque el objeto Graph de SAGE requere una lista de adyacencia que represente
 # la gráfica para poder desplegar su visualización.
+
+#TODO: CAMBIAR NOMBRE
 def toAdjacencyList(complex):
-    d = {}
+
+    # def indexGenerator():
+    #     index = 0
+    #     while(True):
+    #         yield index
+    #         index+=1
+
+    # ig = indexGenerator();
+    d = c.OrderedDict()
     for s in complex:
         addToDict(d,s)
-    return d
+    (vertices,edges) = buildVerticesEdges(d)
+    ts.testEdges(edges)
+    print ('test vertices')
+    print (vertices)
+    return (vertices,edges)
 
 # <Descripción> Crea un diccionario que asigna a cada vértice del complejo un color.
 # <Parámetros> dc: Es el diccionario que representa la lista de adyacencia del complejo.
@@ -108,12 +164,14 @@ def generateComplexProtocol(pcomplex, k):
     return pcomplex
 
 def plot(pcomplex): 
-    dc = toAdjacencyList(pcomplex)
-    testMerge(dc)
-    gc = Graph(dc)
-    color = assignColors(dc)
+    (vertices, edges) = toAdjacencyList(pcomplex)
+    # testMerge(dc)
+    g = ig.Graph(len(vertices))
+    g.add_edges(edges)
+    layout = g.layout("rt")
+    ig.plot(g, layout=layout)
     #testAssignColors(color)
-    gc.show(vertex_colors=color)
+    # gc.show(vertex_colors=color)
 
 k = 2
 p0 = Process(0)
@@ -121,10 +179,10 @@ p1 = Process(1)
 icomplex = [[p0,p1]]
 pcomplex = generateComplexProtocol(icomplex,k)
 print(pcomplex)
-dc = toAdjacencyList(pcomplex)
-ts.testMerge(dc)
+# toAdjacencyList(pcomplex)
+# ts.testMerge(dc)
 
-#plot(pcomplex)
+plot(pcomplex)
 
 
 
