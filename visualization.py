@@ -53,13 +53,29 @@ def buildVerticesEdges(complex):
 
     return vertices,edges
 
+def buildLayout(n):
+	spacing = 3
+	coords = [(i*spacing,0) for i in range(n)]
+	return ig.Layout(coords)
+
+def defineVisualStyle(g):
+    color_dict={1:'black',0:'white'}
+    print(len(g.vs))
+    layout = g.layout("grid_fr") if (len(g.vs)>28) else buildLayout(len(g.vs)) # grid_fr: Algortimo "Fruchterman-Reingold" con heurísticas de grid. 
+    visual_style = {}
+    visual_style["layout"]=layout
+    visual_style["bbox"]=(1920, 1080)
+    visual_style["vertex_color"]=[color_dict[pid] for pid in g.vs["pid"]]
+    visual_style["margin"]=50
+    visual_style["vertex_label_size"]=13
+    return visual_style
+
 def plot(pcomplex):
     (vertices, edges) = buildVerticesEdges(pcomplex)
     g = ig.Graph(len(vertices))
     g.add_edges(edges)
     g.vs["pid"]=[s[0] for s in vertices]
     g.vs["label"]=[s[1] for s in vertices]
-    g.vs["label_dist"]=-3
-    color_dict={1:'black',0:'white'}
-    layout = g.layout('fr')
-    ig.plot(g, layout=layout,bbox = (900, 900),vertex_color = [color_dict[pid] for pid in g.vs["pid"]], margin=50)
+    g.vs["label_dist"]= [-3,3] if len(g.vs)==28 else -3
+    visual_style = defineVisualStyle(g)
+    ig.plot(g, **visual_style)
