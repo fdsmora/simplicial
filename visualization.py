@@ -64,7 +64,7 @@ def defineVisualStyle(g):
     layout = g.layout("grid_fr") if (len(g.vs)>28) else buildLayout(len(g.vs)) # grid_fr: Algortimo "Fruchterman-Reingold" con heurísticas de grid. 
     visual_style = {}
     visual_style["layout"]=layout
-    visual_style["bbox"]=(1920, 1080)
+    visual_style["bbox"]=(1920, 1080) if (len(g.vs)>4) else (800,800)
     visual_style["vertex_color"]=[color_dict[pid] for pid in g.vs["pid"]]
     visual_style["margin"]=50
     visual_style["vertex_label_size"]=13
