@@ -22,7 +22,7 @@ class Process:
     def view(self):
         if self.__view==str(self.id):
             return self.__view
-        temp = ''
+        temp = ''   
         prefix = ''
         for v in self.__view:
             temp += prefix + v
@@ -90,7 +90,7 @@ p0 = Process(0)
 p1 = Process(1)
 icomplex = [[p0,p1]]
 pcomplex = generateComplexProtocol(icomplex,k)
-vz.plot(pcomplex)
+vz.plot(pcomplex,k)
 
 
 
